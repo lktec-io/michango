@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { FiUploadCloud, FiX, FiImage } from 'react-icons/fi';
+import { useEffect, useRef, useState } from 'react';
+import { FiUploadCloud, FiX, FiImage, FiAlertTriangle } from 'react-icons/fi';
 import { uploadImage, getOptimizedUrl } from '../../services/cloudinaryService';
 import { useToast } from '../../contexts/ToastContext';
 import './ImageUploader.css';
@@ -10,6 +10,11 @@ export default function ImageUploader({ label, value, onChange, folder, aspect =
   const inputRef = useRef(null);
   const toast = useToast();
   const [progress, setProgress] = useState(null);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [value?.url]);
 
   async function handleFile(file) {
     if (!file) return;
@@ -64,7 +69,19 @@ export default function ImageUploader({ label, value, onChange, folder, aspect =
         />
         {value?.url ? (
           <>
-            <img src={getOptimizedUrl(value.url, { width: 640 })} alt="" />
+            {imageFailed ? (
+              <div className="image-uploader-placeholder">
+                <FiAlertTriangle />
+                <p>This image could not be loaded</p>
+                <span>The file may have been removed. Try uploading again.</span>
+              </div>
+            ) : (
+              <img
+                src={getOptimizedUrl(value.url, { width: 640 })}
+                alt=""
+                onError={() => setImageFailed(true)}
+              />
+            )}
             <button
               type="button"
               className="image-uploader-remove"

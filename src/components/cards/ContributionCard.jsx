@@ -4,6 +4,7 @@ import { FiPhone, FiHash, FiHeart } from 'react-icons/fi';
 import { getTemplateById } from '../../utils/cardTemplates';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { getOptimizedUrl } from '../../services/cloudinaryService';
+import { useImageStatus } from '../../hooks/useImageStatus';
 import { buildCardUrl } from '../../utils/share';
 import './ContributionCard.css';
 
@@ -14,6 +15,8 @@ import './ContributionCard.css';
 const ContributionCard = forwardRef(function ContributionCard({ event, card }, ref) {
   const template = getTemplateById(card?.templateId || event?.templateId);
   const banner = event?.bannerUrl ? getOptimizedUrl(event.bannerUrl, { width: 720, height: 360 }) : '';
+  const bannerStatus = useImageStatus(banner);
+  const showBanner = bannerStatus === 'loaded';
   const cardUrl = card?.id ? buildCardUrl(card.id) : '';
 
   return (
@@ -27,8 +30,8 @@ const ContributionCard = forwardRef(function ContributionCard({ event, card }, r
         '--card-accent': template.accent,
       }}
     >
-      <div className="contribution-card-banner" style={banner ? { backgroundImage: `url(${banner})` } : undefined}>
-        {!banner && <FiHeart className="contribution-card-banner-fallback" />}
+      <div className="contribution-card-banner" style={showBanner ? { backgroundImage: `url(${banner})` } : undefined}>
+        {!showBanner && <FiHeart className="contribution-card-banner-fallback" />}
         <div className="contribution-card-banner-overlay" />
         <div className="contribution-card-banner-text">
           <span className="contribution-card-eyebrow">You&apos;re invited to celebrate</span>

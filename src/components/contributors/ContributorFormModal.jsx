@@ -6,6 +6,7 @@ import Button from '../common/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { addContributor, updateContributor } from '../../services/contributorService';
+import { syncCardWithContributor } from '../../services/cardService';
 import { incrementEventStats } from '../../services/eventService';
 import { validateContributor, hasErrors } from '../../utils/validators';
 import { generateInvitationCode } from '../../utils/codeGenerator';
@@ -57,6 +58,14 @@ export default function ContributorFormModal({ open, onClose, eventId, contribut
       if (isEditing) {
         const amountDelta = Number(form.amount) - Number(contributor.amount || 0);
         await updateContributor(contributor.id, form);
+        if (contributor.cardId) {
+          await syncCardWithContributor(contributor.cardId, {
+            fullName: form.fullName,
+            phone: form.phone,
+            amount: Number(form.amount) || 0,
+            invitationCode: form.invitationCode,
+          });
+        }
         if (amountDelta !== 0) await incrementEventStats(eventId, { totalAmount: amountDelta });
         toast.success('Contributor updated successfully.');
       } else {

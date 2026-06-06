@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getEventsByOwner } from '../services/eventService';
 
@@ -8,6 +8,14 @@ export function useEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const refresh = useCallback(async () => {
     if (!user) return;
@@ -15,11 +23,11 @@ export function useEvents() {
     setError('');
     try {
       const data = await getEventsByOwner(user.uid);
-      setEvents(data);
+      if (mountedRef.current) setEvents(data);
     } catch {
-      setError('Failed to load events. Please try again.');
+      if (mountedRef.current) setError('Failed to load events. Please try again.');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   }, [user]);
 

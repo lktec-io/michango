@@ -11,6 +11,7 @@ import {
   orderBy,
   limit,
   serverTimestamp,
+  increment,
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { COLLECTIONS } from '../firebase/collections';
@@ -77,13 +78,9 @@ export async function getRecentEvents(ownerId, count = 5) {
 
 export async function incrementEventStats(eventId, deltas) {
   const ref = doc(db, COLLECTIONS.EVENTS, eventId);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return;
-  const current = snap.data();
-  await updateDoc(ref, {
-    totalContributors: Math.max(0, (current.totalContributors || 0) + (deltas.totalContributors || 0)),
-    totalAmount: Math.max(0, (current.totalAmount || 0) + (deltas.totalAmount || 0)),
-    totalCards: Math.max(0, (current.totalCards || 0) + (deltas.totalCards || 0)),
-    updatedAt: serverTimestamp(),
-  });
+  const update = { updatedAt: serverTimestamp() };
+  if (deltas.totalContributors) update.totalContributors = increment(deltas.totalContributors);
+  if (deltas.totalAmount) update.totalAmount = increment(deltas.totalAmount);
+  if (deltas.totalCards) update.totalCards = increment(deltas.totalCards);
+  await updateDoc(ref, update);
 }

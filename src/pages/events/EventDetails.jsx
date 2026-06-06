@@ -35,6 +35,7 @@ import { getEvent, deleteEvent, incrementEventStats } from '../../services/event
 import { deleteContributor } from '../../services/contributorService';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { getOptimizedUrl } from '../../services/cloudinaryService';
+import { useImageStatus } from '../../hooks/useImageStatus';
 import './EventDetails.css';
 
 const PAGE_SIZE = 9;
@@ -64,6 +65,10 @@ export default function EventDetails() {
   const [deletingContributor, setDeletingContributor] = useState(false);
 
   const debouncedSearch = useDebounce(search, 250);
+
+  const banner = event?.bannerUrl ? getOptimizedUrl(event.bannerUrl, { width: 1280, height: 420 }) : '';
+  const bannerStatus = useImageStatus(banner);
+  const showBanner = bannerStatus === 'loaded';
 
   const loadEvent = async () => {
     setEventLoading(true);
@@ -164,8 +169,6 @@ export default function EventDetails() {
 
   if (!event) return null;
 
-  const banner = event.bannerUrl ? getOptimizedUrl(event.bannerUrl, { width: 1280, height: 420 }) : '';
-
   return (
     <div className="event-details-page">
       <Link to="/events" className="event-details-back">
@@ -173,7 +176,7 @@ export default function EventDetails() {
       </Link>
 
       <section className="event-hero glass-panel fade-in-up">
-        <div className="event-hero-banner" style={banner ? { backgroundImage: `url(${banner})` } : undefined}>
+        <div className="event-hero-banner" style={showBanner ? { backgroundImage: `url(${banner})` } : undefined}>
           <div className="event-hero-overlay" />
           <div className="event-hero-content">
             <h2>{event.eventName}</h2>

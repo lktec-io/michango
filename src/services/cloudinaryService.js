@@ -2,22 +2,15 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+const UPLOAD_TIMEOUT_MS = 30000;
+const MAX_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 1200;
 
-/**
- * Uploads an image file to Cloudinary using an unsigned upload preset.
- * @param {File} file - The image file to upload.
- * @param {{ folder?: string, onProgress?: (percent: number) => void }} [options]
- * @returns {Promise<{ url: string, secureUrl: string, publicId: string, width: number, height: number }>}
- */
-export function uploadImage(file, options = {}) {
-  const { folder, onProgress } = options;
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  if (!CLOUD_NAME || !UPLOAD_PRESET) {
-    return Promise.reject(
-      new Error('Cloudinary is not configured. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET.')
-    );
-  }
-
+function uploadOnce(file, { folder, onProgress }) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
@@ -26,6 +19,7 @@ export function uploadImage(file, options = {}) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', UPLOAD_URL);
+    xhr.timeout = UPLOAD_TIMEOUT_MS;
 
     xhr.upload.onprogress = (event) => {
       if (onProgress && event.lengthComputable) {
@@ -45,16 +39,54 @@ export function uploadImage(file, options = {}) {
             height: data.height,
           });
         } else {
-          reject(new Error(data?.error?.message || 'Image upload failed'));
+          const message = data?.error?.message || 'Image upload failed';
+          const error = new Error(message);
+          error.retryable = xhr.status >= 500;
+          reject(error);
         }
       } catch {
         reject(new Error('Image upload failed: invalid server response'));
       }
     };
 
-    xhr.onerror = () => reject(new Error('Image upload failed: network error'));
+    xhr.onerror = () => {
+      const error = new Error('Image upload failed: network error');
+      error.retryable = true;
+      reject(error);
+    };
+    xhr.ontimeout = () => {
+      const error = new Error('Image upload timed out. Please check your connection and try again.');
+      error.retryable = true;
+      reject(error);
+    };
     xhr.send(formData);
   });
+}
+
+/**
+ * Uploads an image file to Cloudinary using an unsigned upload preset.
+ * Retries transient failures (network errors, timeouts, 5xx responses) with
+ * a short backoff before giving up.
+ * @param {File} file - The image file to upload.
+ * @param {{ folder?: string, onProgress?: (percent: number) => void }} [options]
+ * @returns {Promise<{ url: string, secureUrl: string, publicId: string, width: number, height: number }>}
+ */
+export async function uploadImage(file, options = {}) {
+  if (!CLOUD_NAME || !UPLOAD_PRESET) {
+    throw new Error('Cloudinary is not configured. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET.');
+  }
+
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await uploadOnce(file, options);
+    } catch (error) {
+      lastError = error;
+      if (!error.retryable || attempt === MAX_ATTEMPTS) throw error;
+      await delay(RETRY_DELAY_MS * attempt);
+    }
+  }
+  throw lastError;
 }
 
 /**

@@ -1,0 +1,92 @@
+rules_version = '2';
+
+// Security model:
+// - "events", "contributors" and the owner's "users" profile are private to
+//   the authenticated owner (matched on the ownerId / uid field).
+// - "cards" must be readable by anyone (the public /card/:cardId page and the
+//   QR code printed on every card rely on anonymous reads). Only the owner can
+//   create/delete a card; anonymous visitors may only bump the analytics
+//   counters (downloadCount, shareCount, status) — every other field is
+//   immutable from the client.
+// - "events" are also readable by anyone because the public card page renders
+//   the wedding banner, names and date alongside the contributor's card.
+// - "downloads"/"shares" are write-only analytics logs: anyone holding a card
+//   link may create an entry (so public downloads/shares are recorded), but
+//   only the owner can read their own analytics, and entries are immutable
+//   once written.
+
+function isSignedIn() {
+  return request.auth != null;
+}
+
+function isOwner(ownerId) {
+  return isSignedIn() && request.auth.uid == ownerId;
+}
+
+function unchanged(field) {
+  return request.resource.data[field] == resource.data[field];
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /events/{eventId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isOwner(request.resource.data.ownerId);
+      allow update, delete: if isOwner(resource.data.ownerId);
+    }
+
+    match /contributors/{contributorId} {
+      allow read, write: if isOwner(resource.data.ownerId);
+      allow create: if isOwner(request.resource.data.ownerId);
+    }
+
+    match /cards/{cardId} {
+      allow get: if true;
+      allow list: if isOwner(resource.data.ownerId);
+      allow create: if isOwner(request.resource.data.ownerId);
+      allow delete: if isOwner(resource.data.ownerId);
+
+      // Owners may update anything on their own card (e.g. keeping the
+      // generated card in sync after a contributor edit). Anonymous visitors
+      // on the public card page may only increment the analytics counters and
+      // flip the status — every denormalized contributor field must stay put.
+      allow update: if isOwner(resource.data.ownerId) || (
+        unchanged('ownerId') &&
+        unchanged('eventId') &&
+        unchanged('contributorId') &&
+        unchanged('contributorName') &&
+        unchanged('contributorPhone') &&
+        unchanged('amount') &&
+        unchanged('invitationCode') &&
+        unchanged('templateId') &&
+        unchanged('createdAt') &&
+        request.resource.data.downloadCount is int &&
+        request.resource.data.shareCount is int &&
+        request.resource.data.status is string
+      );
+    }
+
+    match /downloads/{downloadId} {
+      allow read: if isOwner(resource.data.ownerId);
+      allow create: if request.resource.data.ownerId ==
+        get(/databases/$(database)/documents/cards/$(request.resource.data.cardId)).data.ownerId;
+      allow update, delete: if false;
+    }
+
+    match /shares/{shareId} {
+      allow read: if isOwner(resource.data.ownerId);
+      allow create: if request.resource.data.ownerId ==
+        get(/databases/$(database)/documents/cards/$(request.resource.data.cardId)).data.ownerId;
+      allow update, delete: if false;
+    }
+
+    match /analytics/{docId} {
+      allow read, write: if isOwner(resource.data.ownerId);
+    }
+  }
+}

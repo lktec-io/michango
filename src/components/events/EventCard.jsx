@@ -3,17 +3,20 @@ import { FiCalendar, FiMapPin, FiUsers, FiArrowRight } from 'react-icons/fi';
 import Badge from '../common/Badge';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { getOptimizedUrl } from '../../services/cloudinaryService';
+import { useImageStatus } from '../../hooks/useImageStatus';
 import './EventCard.css';
 
 const STATUS_TONES = { active: 'success', completed: 'info', archived: 'neutral' };
 
 export default function EventCard({ event, delay = 0 }) {
   const banner = event.bannerUrl ? getOptimizedUrl(event.bannerUrl, { width: 480, height: 240 }) : '';
+  const bannerStatus = useImageStatus(banner);
+  const showBanner = bannerStatus === 'loaded';
 
   return (
     <Link to={`/events/${event.id}`} className="event-card glass-panel fade-in-up" style={{ animationDelay: `${delay}ms` }}>
-      <div className="event-card-banner" style={banner ? { backgroundImage: `url(${banner})` } : undefined}>
-        {!banner && <span className="event-card-banner-fallback">{event.eventName?.[0] || 'E'}</span>}
+      <div className="event-card-banner" style={showBanner ? { backgroundImage: `url(${banner})` } : undefined}>
+        {!showBanner && <span className="event-card-banner-fallback">{event.eventName?.[0] || 'E'}</span>}
         <Badge tone={STATUS_TONES[event.status] || 'neutral'}>{event.status || 'active'}</Badge>
       </div>
       <div className="event-card-body">

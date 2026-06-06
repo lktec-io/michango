@@ -46,6 +46,19 @@ export async function generateCard({ ownerId, eventId, contributor, templateId }
   return cardId;
 }
 
+/**
+ * Keeps a generated card's denormalized contributor fields in sync after
+ * the contributor is edited (name, phone, amount, invitation code).
+ */
+export async function syncCardWithContributor(cardId, contributor) {
+  await updateDoc(doc(cardsRef, cardId), {
+    contributorName: contributor.fullName,
+    contributorPhone: contributor.phone,
+    amount: contributor.amount,
+    invitationCode: contributor.invitationCode,
+  });
+}
+
 export async function getCard(cardId) {
   const snap = await getDoc(doc(cardsRef, cardId));
   if (!snap.exists()) return null;
