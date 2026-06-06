@@ -1,0 +1,170 @@
+.contribution-card {
+  width: 100%;
+  max-width: 460px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.contribution-card-banner {
+  position: relative;
+  height: 168px;
+  background-color: rgba(0, 0, 0, 0.12);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+}
+
+.contribution-card-banner-fallback {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  font-size: 2.6rem;
+  opacity: 0.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contribution-card-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.contribution-card-banner-text {
+  position: relative;
+  z-index: 1;
+  padding: 1.1rem 1.3rem;
+  color: #fff;
+}
+
+.contribution-card-eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+
+.contribution-card-banner-text h2 {
+  font-size: 1.4rem;
+  color: #fff;
+  margin: 0.2rem 0;
+}
+
+.contribution-card-banner-text p {
+  font-size: 0.82rem;
+  opacity: 0.92;
+}
+
+.contribution-card-body {
+  padding: 1.3rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.4);
+  flex: 1;
+}
+
+.contribution-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.contribution-card-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+  margin-bottom: 0.2rem;
+}
+
+.contribution-card-name {
+  font-size: 1.5rem;
+  margin-bottom: 0.7rem;
+  word-break: break-word;
+}
+
+.contribution-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.contribution-card-details > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+}
+
+.contribution-card-details dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  opacity: 0.72;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.contribution-card-details dd {
+  font-weight: 700;
+  text-align: right;
+}
+
+.contribution-card-amount {
+  color: var(--card-accent);
+  font-size: 1.05rem;
+  font-family: var(--font-display);
+}
+
+.contribution-card-code {
+  letter-spacing: 0.05em;
+}
+
+.contribution-card-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.contribution-card-qr span {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.contribution-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.3rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.28);
+  opacity: 0.75;
+}
+
+@media (max-width: 480px) {
+  .contribution-card-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contribution-card-qr {
+    flex-direction: row;
+    justify-content: center;
+  }
+}

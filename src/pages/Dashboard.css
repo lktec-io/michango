@@ -1,0 +1,113 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.dashboard-welcome h2 {
+  font-size: 1.7rem;
+  margin-bottom: 0.3rem;
+}
+
+.dashboard-welcome p {
+  color: var(--color-text-muted);
+}
+
+.dashboard-error {
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  font-size: 0.88rem;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.dashboard-amount-note {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+
+.dashboard-amount-note strong {
+  color: var(--color-primary);
+  font-family: var(--font-display);
+}
+
+.dashboard-quick-actions h3,
+.dashboard-recent h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.quick-action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.quick-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  font-size: 1.4rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.tone-primary .quick-action-icon {
+  background: var(--gradient-primary);
+}
+.tone-warm .quick-action-icon {
+  background: var(--gradient-warm);
+}
+.tone-info .quick-action-icon {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.quick-action-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.quick-action-card p {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.dashboard-recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.dashboard-recent-header h3 {
+  margin-bottom: 0;
+}
+
+.recent-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+}

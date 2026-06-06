@@ -1,0 +1,35 @@
+.skeleton {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-alt) 25%,
+    rgba(255, 255, 255, 0.55) 50%,
+    var(--color-bg-alt) 75%
+  );
+  background-size: 480px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+[data-theme='dark'] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-alt) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-alt) 75%
+  );
+  background-size: 480px 100%;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: var(--space-lg);
+}
+
+.skeleton-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+}

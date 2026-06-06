@@ -1,0 +1,50 @@
+.not-found {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: var(--gradient-hero);
+}
+
+.not-found-card {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-surface);
+}
+
+.not-found-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: 1.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.not-found-card h1 {
+  font-size: 3.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.not-found-card h2 {
+  font-size: 1.3rem;
+}
+
+.not-found-card p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}

@@ -1,0 +1,53 @@
+.card-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.card-preview-stage {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.card-preview-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.card-preview-action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.card-preview-action-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.card-preview-format-buttons,
+.card-preview-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.card-preview-open-link {
+  display: inline-flex;
+}
+
+@media (max-width: 620px) {
+  .card-preview-actions {
+    grid-template-columns: 1fr;
+  }
+}
