@@ -13,10 +13,13 @@ import {
 } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { ensureUserProfile, getUserProfile } from '../services/userService';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
+import { useToast } from './ToastContext';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const toast = useToast();
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,15 +28,21 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        const userProfile = await ensureUserProfile(firebaseUser);
-        setProfile(userProfile);
+        try {
+          const userProfile = await ensureUserProfile(firebaseUser);
+          setProfile(userProfile);
+        } catch (err) {
+          console.error('Failed to load or create the user profile:', err);
+          setProfile(null);
+          toast.error(getFirestoreErrorMessage(err));
+        }
       } else {
         setProfile(null);
       }
       setLoading(false);
     });
     return unsubscribe;
-  }, []);
+  }, [toast]);
 
   async function register({ name, email, password }) {
     const credential = await createUserWithEmailAndPassword(auth, email, password);

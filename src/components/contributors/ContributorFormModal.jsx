@@ -8,6 +8,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { addContributor, updateContributor } from '../../services/contributorService';
 import { syncCardWithContributor } from '../../services/cardService';
 import { incrementEventStats } from '../../services/eventService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { validateContributor, hasErrors } from '../../utils/validators';
 import { generateInvitationCode } from '../../utils/codeGenerator';
 
@@ -75,8 +76,9 @@ export default function ContributorFormModal({ open, onClose, eventId, contribut
       }
       onSaved?.();
       onClose();
-    } catch {
-      toast.error('Could not save the contributor. Please try again.');
+    } catch (err) {
+      console.error('Failed to save contributor:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setSubmitting(false);
     }

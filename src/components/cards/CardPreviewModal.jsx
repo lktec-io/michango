@@ -9,6 +9,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { generateCard, getCard, recordDownload, recordShare } from '../../services/cardService';
 import { incrementEventStats } from '../../services/eventService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { downloadCard } from '../../utils/cardDownload';
 import { buildCardUrl, buildWhatsAppShareUrl } from '../../utils/share';
 import './CardPreviewModal.css';
@@ -52,8 +53,9 @@ export default function CardPreviewModal({ open, onClose, event, contributor, on
           onCardReady?.();
         }
         if (active) setCard(resolved);
-      } catch {
-        if (active) toast.error('Could not generate the contribution card. Please try again.');
+      } catch (err) {
+        console.error('Failed to generate contribution card:', err);
+        if (active) toast.error(getFirestoreErrorMessage(err));
       } finally {
         if (active) setLoading(false);
       }

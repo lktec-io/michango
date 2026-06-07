@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiUser, FiLock, FiMonitor, FiSave } from 'react-icons/fi';
+import { FiUser, FiLock, FiMonitor, FiSave, FiCheck } from 'react-icons/fi';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import ImageUploader from '../components/common/ImageUploader';
@@ -16,7 +16,8 @@ const EMPTY_PASSWORD_FORM = { currentPassword: '', newPassword: '', confirmPassw
 export default function Settings() {
   const { user, profile, updateDisplayName, changePassword, refreshProfile } = useAuth();
   const toast = useToast();
-  const { theme, setTheme } = useTheme();
+  const { theme, themes, setTheme } = useTheme();
+  const [savingTheme, setSavingTheme] = useState(null);
 
   const [profileForm, setProfileForm] = useState({ displayName: '', companyName: '' });
   const [logo, setLogo] = useState(null);
@@ -85,6 +86,20 @@ export default function Settings() {
       toast.error(getAuthErrorMessage(error));
     } finally {
       setSavingPassword(false);
+    }
+  }
+
+  async function handleThemeSelect(themeId) {
+    if (themeId === theme) return;
+    setTheme(themeId);
+    setSavingTheme(themeId);
+    try {
+      await updateUserProfile(user.uid, { theme: themeId });
+      await refreshProfile();
+    } catch {
+      toast.error('Theme applied, but we could not save it to your profile.');
+    } finally {
+      setSavingTheme(null);
     }
   }
 
@@ -182,26 +197,38 @@ export default function Settings() {
           </span>
           <div>
             <h3>Appearance</h3>
-            <p className="text-muted">Choose how Michango looks on this device.</p>
+            <p className="text-muted">
+              Pick a theme for your workspace. It applies instantly and is saved to your profile, so it follows
+              you to any device you sign in on.
+            </p>
           </div>
         </header>
-        <div className="settings-theme-options">
-          <button
-            type="button"
-            className={`settings-theme-option ${theme === 'light' ? 'active' : ''}`}
-            onClick={() => setTheme('light')}
-          >
-            <span className="settings-theme-swatch settings-theme-swatch-light" />
-            <span>Light mode</span>
-          </button>
-          <button
-            type="button"
-            className={`settings-theme-option ${theme === 'dark' ? 'active' : ''}`}
-            onClick={() => setTheme('dark')}
-          >
-            <span className="settings-theme-swatch settings-theme-swatch-dark" />
-            <span>Dark mode</span>
-          </button>
+        <div className="theme-grid">
+          {themes.map((option) => {
+            const active = theme === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={`theme-preview-card ${active ? 'active' : ''}`}
+                onClick={() => handleThemeSelect(option.id)}
+                aria-pressed={active}
+              >
+                <span className="theme-preview-swatch" style={{ background: option.preview }}>
+                  {active && (
+                    <span className="theme-preview-active-badge">
+                      <FiCheck />
+                    </span>
+                  )}
+                </span>
+                <span className="theme-preview-label">
+                  {option.label}
+                  {savingTheme === option.id && <span className="theme-preview-saving">Saving…</span>}
+                </span>
+                <span className="theme-preview-description">{option.description}</span>
+              </button>
+            );
+          })}
         </div>
       </section>
     </div>

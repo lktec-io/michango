@@ -28,6 +28,7 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Pagination from '../../components/common/Pagination';
 import Spinner from '../../components/common/Spinner';
+import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { useContributors } from '../../hooks/useContributors';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -42,12 +43,13 @@ const PAGE_SIZE = 9;
 
 export default function EventDetails() {
   const { eventId } = useParams();
+  const { user } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
 
   const [event, setEvent] = useState(null);
   const [eventLoading, setEventLoading] = useState(true);
-  const { contributors, loading: contributorsLoading, refresh } = useContributors(eventId);
+  const { contributors, loading: contributorsLoading, refresh } = useContributors(eventId, user?.uid);
 
   const [search, setSearch] = useState('');
   const [amountFilter, setAmountFilter] = useState('all');

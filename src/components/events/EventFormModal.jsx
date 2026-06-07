@@ -6,6 +6,7 @@ import ImageUploader from '../common/ImageUploader';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { createEvent, updateEvent } from '../../services/eventService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { validateEvent, hasErrors } from '../../utils/validators';
 import { CARD_TEMPLATES } from '../../utils/cardTemplates';
 import './EventFormModal.css';
@@ -85,8 +86,9 @@ export default function EventFormModal({ open, onClose, event, onSaved }) {
       }
       onSaved?.();
       onClose();
-    } catch {
-      toast.error('Could not save the event. Please try again.');
+    } catch (err) {
+      console.error('Failed to save event:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setSubmitting(false);
     }

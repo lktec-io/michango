@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 import { useAuth } from '../contexts/AuthContext';
 import { getRecentEvents } from '../services/eventService';
 import { getOwnerAnalytics } from '../services/analyticsService';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
 import { formatCurrency } from '../utils/formatters';
 import './Dashboard.css';
 
@@ -40,8 +41,9 @@ export default function Dashboard() {
         if (!active) return;
         setStats(analytics.totals);
         setRecentEvents(events);
-      } catch {
-        if (active) setError('Failed to load your dashboard. Please refresh the page.');
+      } catch (err) {
+        console.error('Dashboard failed to load owner analytics/recent events:', err);
+        if (active) setError(getFirestoreErrorMessage(err));
       } finally {
         if (active) setLoading(false);
       }

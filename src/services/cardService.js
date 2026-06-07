@@ -65,12 +65,6 @@ export async function getCard(cardId) {
   return { id: snap.id, ...snap.data() };
 }
 
-export async function getCardsByEvent(eventId) {
-  const q = query(cardsRef, where('eventId', '==', eventId), orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-}
-
 export async function getCardsByOwner(ownerId) {
   const q = query(cardsRef, where('ownerId', '==', ownerId), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);

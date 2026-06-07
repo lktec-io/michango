@@ -50,8 +50,16 @@ export async function getContributor(contributorId) {
   return { id: snap.id, ...snap.data() };
 }
 
-export async function getContributorsByEvent(eventId) {
-  const q = query(contributorsRef, where('eventId', '==', eventId), orderBy('createdAt', 'desc'));
+export async function getContributorsByEvent(eventId, ownerId) {
+  // Filtering on both eventId and ownerId (rather than eventId alone) lets Firestore's
+  // security rules statically prove `resource.data.ownerId == request.auth.uid` for every
+  // possible result — a query that only filtered on eventId would be denied outright.
+  const q = query(
+    contributorsRef,
+    where('eventId', '==', eventId),
+    where('ownerId', '==', ownerId),
+    orderBy('createdAt', 'desc')
+  );
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

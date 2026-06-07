@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { THEMES, THEME_IDS } from '../constants/themes';
 
 const ThemeContext = createContext(null);
 const STORAGE_KEY = 'michango-theme';
@@ -6,22 +7,30 @@ const STORAGE_KEY = 'michango-theme';
 function getInitialTheme() {
   if (typeof window === 'undefined') return 'light';
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark') return stored;
+  if (THEME_IDS.includes(stored)) return stored;
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setThemeState] = useState(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     window.localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme((current) => (current === 'light' ? 'dark' : 'light'));
+  function setTheme(id) {
+    if (THEME_IDS.includes(id)) setThemeState(id);
+  }
+
+  function toggleTheme() {
+    setThemeState((current) => (current === 'dark' ? 'light' : 'dark'));
+  }
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme, themes: THEMES, setTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
   );
 }
 

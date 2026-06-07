@@ -9,6 +9,7 @@ import { parseSpreadsheetFile, validateImportRows } from '../../utils/excelParse
 import { bulkAddContributors, getContributor } from '../../services/contributorService';
 import { incrementEventStats } from '../../services/eventService';
 import { generateCard } from '../../services/cardService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { formatCurrency } from '../../utils/formatters';
 import './ExcelImportModal.css';
 
@@ -95,8 +96,9 @@ export default function ExcelImportModal({ open, onClose, eventId, templateId, o
       setStep(STEPS.DONE);
       toast.success(`Imported ${ids.length} contributor${ids.length === 1 ? '' : 's'} and generated their cards.`);
       onImported?.();
-    } catch {
-      toast.error('Something went wrong during the import. Please try again.');
+    } catch (err) {
+      console.error('Failed to import contributors:', err);
+      toast.error(getFirestoreErrorMessage(err));
       setStep(STEPS.PREVIEW);
     }
   }

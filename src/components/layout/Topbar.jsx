@@ -9,7 +9,8 @@ import './Topbar.css';
 
 export default function Topbar({ title, onMenuClick }) {
   const { user, profile, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, themes, toggleTheme } = useTheme();
+  const isDarkMode = themes.find((t) => t.id === theme)?.mode === 'dark';
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -49,10 +50,10 @@ export default function Topbar({ title, onMenuClick }) {
           type="button"
           className="topbar-icon-btn"
           onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+          title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
         >
-          {theme === 'light' ? <FiMoon /> : <FiSun />}
+          {isDarkMode ? <FiSun /> : <FiMoon />}
         </button>
         <div className="topbar-user" ref={menuRef}>
           <button type="button" className="topbar-user-trigger" onClick={() => setMenuOpen((v) => !v)}>
