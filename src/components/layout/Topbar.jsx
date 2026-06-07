@@ -30,7 +30,8 @@ export default function Topbar({ title, onMenuClick }) {
       await logout();
       toast.info('You have been signed out.');
       navigate('/login', { replace: true });
-    } catch {
+    } catch (err) {
+      console.error('Failed to sign out:', err);
       toast.error('Could not sign you out. Please try again.');
     }
   }

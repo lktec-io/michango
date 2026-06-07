@@ -54,7 +54,8 @@ export default function Templates() {
       toast.success('Custom template added to your library.');
       setUploadOpen(false);
       resetForm();
-    } catch {
+    } catch (err) {
+      console.error('Failed to save custom template:', err);
       toast.error('Could not save the template. Please try again.');
     } finally {
       setSaving(false);
@@ -68,7 +69,8 @@ export default function Templates() {
       await removeCustomTemplate(user.uid, deleteTarget);
       await refreshProfile();
       toast.success('Template removed from your library.');
-    } catch {
+    } catch (err) {
+      console.error('Failed to remove custom template:', err);
       toast.error('Could not remove the template.');
     } finally {
       setDeleting(false);

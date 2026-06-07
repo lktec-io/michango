@@ -44,7 +44,8 @@ function uploadOnce(file, { folder, onProgress }) {
           error.retryable = xhr.status >= 500;
           reject(error);
         }
-      } catch {
+      } catch (err) {
+        console.error('Cloudinary returned an unparseable response:', err);
         reject(new Error('Image upload failed: invalid server response'));
       }
     };

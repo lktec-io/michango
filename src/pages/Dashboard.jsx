@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiUsers, FiDollarSign, FiCreditCard, FiPlus, FiUpload, FiBarChart2 } from 'react-icons/fi';
+import DashboardHero from '../components/dashboard/DashboardHero';
 import StatCard from '../components/common/StatCard';
 import EventCard from '../components/events/EventCard';
 import { SkeletonCard } from '../components/common/Skeleton';
@@ -59,10 +60,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      <section className="dashboard-welcome fade-in-up">
-        <h2>Welcome back, {displayName.split(' ')[0]} 👋</h2>
-        <p>Here&apos;s what&apos;s happening across your wedding events today.</p>
-      </section>
+      <DashboardHero name={displayName.split(' ')[0]} />
 
       {error && <div className="dashboard-error">{error}</div>}
 

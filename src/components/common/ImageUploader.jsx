@@ -33,6 +33,7 @@ export default function ImageUploader({ label, value, onChange, folder, aspect =
       onChange({ url: result.secureUrl, publicId: result.publicId });
       toast.success('Image uploaded successfully.');
     } catch (error) {
+      console.error('Failed to upload image to Cloudinary:', error);
       toast.error(error.message || 'Image upload failed. Please try again.');
     } finally {
       setProgress(null);

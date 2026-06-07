@@ -90,7 +90,8 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.78rem;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
   color: var(--color-text-muted);
 }
 

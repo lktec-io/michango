@@ -84,7 +84,8 @@
   gap: 0.3rem;
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  font-family: var(--mono, monospace);
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
 }
 
 .contributor-card-notes {

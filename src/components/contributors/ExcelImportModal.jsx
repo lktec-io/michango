@@ -59,6 +59,7 @@ export default function ExcelImportModal({ open, onClose, eventId, templateId, o
         toast.warning('No valid rows were found. Please check the file format and try again.');
       }
     } catch (error) {
+      console.error('Failed to parse import file:', error);
       toast.error(error.message || 'Could not parse the file.');
     } finally {
       setParsing(false);

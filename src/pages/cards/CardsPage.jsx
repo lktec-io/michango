@@ -12,6 +12,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { useDebounce } from '../../hooks/useDebounce';
 import { getEventsByOwner } from '../../services/eventService';
 import { getCardsByOwner } from '../../services/cardService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { formatCurrency, timeAgo } from '../../utils/formatters';
 import './CardsPage.css';
 
@@ -48,8 +49,9 @@ export default function CardsPage() {
       const [eventsData, cardsData] = await Promise.all([getEventsByOwner(user.uid), getCardsByOwner(user.uid)]);
       setEvents(eventsData);
       setCards(cardsData);
-    } catch {
-      toast.error('Failed to load generated cards.');
+    } catch (err) {
+      console.error('Failed to load generated cards:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setLoading(false);
     }

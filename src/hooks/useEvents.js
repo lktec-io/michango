@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getEventsByOwner } from '../services/eventService';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
 
 /** Loads and refreshes the current user's events. */
 export function useEvents() {
@@ -24,8 +25,9 @@ export function useEvents() {
     try {
       const data = await getEventsByOwner(user.uid);
       if (mountedRef.current) setEvents(data);
-    } catch {
-      if (mountedRef.current) setError('Failed to load events. Please try again.');
+    } catch (err) {
+      console.error('Failed to load events:', err);
+      if (mountedRef.current) setError(getFirestoreErrorMessage(err));
     } finally {
       if (mountedRef.current) setLoading(false);
     }

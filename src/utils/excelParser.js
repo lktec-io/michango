@@ -40,7 +40,8 @@ export function parseSpreadsheetFile(file) {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
         resolve(rows.map(mapRowKeys));
-      } catch {
+      } catch (err) {
+        console.error('Failed to parse spreadsheet file:', err);
         reject(new Error('Could not parse the spreadsheet. Please check the file format.'));
       }
     };

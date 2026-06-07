@@ -65,10 +65,6 @@ export function AuthProvider({ children }) {
     await sendPasswordResetEmail(auth, email);
   }
 
-  async function resendVerificationEmail() {
-    if (auth.currentUser) await sendEmailVerification(auth.currentUser);
-  }
-
   async function changePassword({ currentPassword, newPassword }) {
     if (!auth.currentUser?.email) return;
     const credential = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
@@ -93,12 +89,10 @@ export function AuthProvider({ children }) {
     profile,
     loading,
     isAuthenticated: Boolean(user),
-    isEmailVerified: Boolean(user?.emailVerified),
     register,
     login,
     logout,
     resetPassword,
-    resendVerificationEmail,
     changePassword,
     updateDisplayName,
     refreshProfile,

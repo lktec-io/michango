@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getContributorsByEvent } from '../services/contributorService';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
 
 /** Loads and refreshes contributors for a given event, scoped to its owner. */
 export function useContributors(eventId, ownerId) {
@@ -22,8 +23,9 @@ export function useContributors(eventId, ownerId) {
     try {
       const data = await getContributorsByEvent(eventId, ownerId);
       if (mountedRef.current) setContributors(data);
-    } catch {
-      if (mountedRef.current) setError('Failed to load contributors. Please try again.');
+    } catch (err) {
+      console.error('Failed to load contributors for event:', err);
+      if (mountedRef.current) setError(getFirestoreErrorMessage(err));
     } finally {
       if (mountedRef.current) setLoading(false);
     }

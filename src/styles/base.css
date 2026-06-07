@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap');
+/* Poppins powers the entire app UI (see --font-sans / --font-display below).
+   Playfair Display and Cormorant Garamond are loaded only for the contribution
+   CARD TEMPLATES — those are branded designs handed to wedding guests, each with
+   its own typographic identity, and are intentionally independent of the app's UI font. */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
 
 *,
 *::before,
@@ -29,6 +33,24 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Replace the default browser focus outline with a soft, theme-aware glow.
+   `:focus-visible` keeps the glow for keyboard navigation while skipping it
+   on mouse/touch clicks, so it never looks like stray UI noise. */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-bg), 0 0 0 6px var(--glow-ring);
+  transition: box-shadow var(--transition-fast);
+}
+
+a:focus-visible,
+button:focus-visible {
+  border-radius: var(--radius-sm);
 }
 
 button {

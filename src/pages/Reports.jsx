@@ -19,6 +19,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { getOwnerAnalytics } from '../services/analyticsService';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
 import { formatCurrency, formatNumber } from '../utils/formatters';
 import './Reports.css';
 
@@ -42,8 +43,9 @@ export default function Reports() {
       try {
         const data = await getOwnerAnalytics(user.uid, 6);
         if (active) setAnalytics(data);
-      } catch {
-        if (active) toast.error('Failed to load report data.');
+      } catch (err) {
+        console.error('Failed to load report data:', err);
+        if (active) toast.error(getFirestoreErrorMessage(err));
       } finally {
         if (active) setLoading(false);
       }

@@ -15,6 +15,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { useDebounce } from '../../hooks/useDebounce';
 import { getEventsByOwner, incrementEventStats } from '../../services/eventService';
 import { getContributorsByOwner, deleteContributor } from '../../services/contributorService';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import './ContributorsPage.css';
 
 const PAGE_SIZE = 9;
@@ -51,8 +52,9 @@ export default function ContributorsPage() {
       ]);
       setEvents(eventsData);
       setContributors(contributorsData);
-    } catch {
-      toast.error('Failed to load contributors. Please try again.');
+    } catch (err) {
+      console.error('Failed to load contributors page data:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -108,8 +110,9 @@ export default function ContributorsPage() {
       });
       toast.success('Contributor removed successfully.');
       load();
-    } catch {
-      toast.error('Could not remove the contributor.');
+    } catch (err) {
+      console.error('Failed to delete contributor:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setDeleting(false);
       setDeleteTarget(null);

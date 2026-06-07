@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
-import VerifyEmailBanner from './VerifyEmailBanner';
 import './DashboardLayout.css';
 
 const TITLES = {
@@ -29,7 +28,6 @@ export default function DashboardLayout() {
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="dashboard-main">
         <Topbar title={resolveTitle(location.pathname)} onMenuClick={() => setSidebarOpen(true)} />
-        <VerifyEmailBanner />
         <main className="dashboard-content">
           <div className="fade-in" key={location.pathname}>
             <Outlet />

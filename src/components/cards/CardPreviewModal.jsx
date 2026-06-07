@@ -74,7 +74,8 @@ export default function CardPreviewModal({ open, onClose, event, contributor, on
       await downloadCard(cardRef.current, format, `${card.contributorName}-${event.eventName}`);
       await recordDownload(card.id, event.id, format, card.ownerId);
       toast.success(`Card downloaded as ${format.toUpperCase()}.`);
-    } catch {
+    } catch (err) {
+      console.error('Failed to download contribution card:', err);
       toast.error('Download failed. Please try again.');
     } finally {
       setDownloading(null);
@@ -89,7 +90,8 @@ export default function CardPreviewModal({ open, onClose, event, contributor, on
       const url = buildWhatsAppShareUrl({ name: card.contributorName, eventName: event.eventName, cardLink, phone: card.contributorPhone });
       window.open(url, '_blank', 'noopener,noreferrer');
       await recordShare(card.id, event.id, 'whatsapp', card.ownerId);
-    } catch {
+    } catch (err) {
+      console.error('Failed to record WhatsApp share:', err);
       toast.error('Could not open WhatsApp share.');
     } finally {
       setSharing(false);
@@ -101,7 +103,8 @@ export default function CardPreviewModal({ open, onClose, event, contributor, on
     try {
       await navigator.clipboard.writeText(buildCardUrl(card.id));
       toast.success('Card link copied to clipboard.');
-    } catch {
+    } catch (err) {
+      console.error('Failed to copy card link:', err);
       toast.error('Could not copy the link.');
     }
   }

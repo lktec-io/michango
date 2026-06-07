@@ -4,15 +4,6 @@
   gap: var(--space-lg);
 }
 
-.dashboard-welcome h2 {
-  font-size: 1.7rem;
-  margin-bottom: 0.3rem;
-}
-
-.dashboard-welcome p {
-  color: var(--color-text-muted);
-}
-
 .dashboard-error {
   padding: 0.85rem 1.1rem;
   border-radius: var(--radius-md);

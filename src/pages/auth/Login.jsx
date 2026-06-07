@@ -86,9 +86,6 @@ export default function Login() {
         <Button type="submit" fullWidth size="lg" loading={submitting}>
           Sign in
         </Button>
-        <p className="auth-form-footer">
-          Don&apos;t have an account? <Link to="/register">Create one now</Link>
-        </p>
       </form>
     </AuthLayout>
   );

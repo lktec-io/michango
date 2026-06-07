@@ -8,6 +8,7 @@ import { useToast } from '../contexts/ToastContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { updateUserProfile } from '../services/userService';
 import { getAuthErrorMessage } from '../utils/authErrors';
+import { getFirestoreErrorMessage } from '../utils/firestoreErrors';
 import { isStrongPassword } from '../utils/validators';
 import './Settings.css';
 
@@ -54,8 +55,9 @@ export default function Settings() {
       });
       await refreshProfile();
       toast.success('Profile updated successfully.');
-    } catch {
-      toast.error('Could not update your profile. Please try again.');
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setSavingProfile(false);
     }
@@ -96,7 +98,8 @@ export default function Settings() {
     try {
       await updateUserProfile(user.uid, { theme: themeId });
       await refreshProfile();
-    } catch {
+    } catch (err) {
+      console.error('Failed to persist theme preference:', err);
       toast.error('Theme applied, but we could not save it to your profile.');
     } finally {
       setSavingTheme(null);

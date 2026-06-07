@@ -35,6 +35,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { getEvent, deleteEvent, incrementEventStats } from '../../services/eventService';
 import { deleteContributor } from '../../services/contributorService';
 import { formatCurrency, formatDate } from '../../utils/formatters';
+import { getFirestoreErrorMessage } from '../../utils/firestoreErrors';
 import { getOptimizedUrl } from '../../services/cloudinaryService';
 import { useImageStatus } from '../../hooks/useImageStatus';
 import './EventDetails.css';
@@ -82,8 +83,9 @@ export default function EventDetails() {
         return;
       }
       setEvent(data);
-    } catch {
-      toast.error('Failed to load event details.');
+    } catch (err) {
+      console.error('Failed to load event details:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setEventLoading(false);
     }
@@ -127,8 +129,9 @@ export default function EventDetails() {
       await deleteEvent(eventId);
       toast.success('Event deleted successfully.');
       navigate('/events', { replace: true });
-    } catch {
-      toast.error('Could not delete the event. Please try again.');
+    } catch (err) {
+      console.error('Failed to delete event:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setDeletingEvent(false);
       setDeleteEventOpen(false);
@@ -148,8 +151,9 @@ export default function EventDetails() {
       toast.success('Contributor removed successfully.');
       refresh();
       loadEvent();
-    } catch {
-      toast.error('Could not remove the contributor. Please try again.');
+    } catch (err) {
+      console.error('Failed to delete contributor:', err);
+      toast.error(getFirestoreErrorMessage(err));
     } finally {
       setDeletingContributor(false);
       setDeleteContributorTarget(null);
